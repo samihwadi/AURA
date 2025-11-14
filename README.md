@@ -1,6 +1,6 @@
 # AURA - Automated Job Application Workflow
 
-**AURA** is an n8n workflow designed to automate the process of discovering, evaluating, and tracking job postings. It streamlines the entire workflow from job extraction to tailored resume and cover letter generation, and finally logs the results in Google Sheets.
+**Automated Unified Recruiting Agent (AURA)** is an n8n workflow designed to automate the process of discovering, evaluating, and tracking job postings. It streamlines the entire workflow from job extraction to tailored resume and cover letter generation, and finally logs the results in Google Sheets.
 
 ---
 
