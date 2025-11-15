@@ -60,6 +60,23 @@
 
 ---
 
+## Prerequisites
+
+Before running the workflow, prepare a Google Sheets document with the following **minimum required columns** (additional columns may be added as desired):
+
+| Column Name          | Purpose |
+|----------------------|------------------------------------------------|
+| **Job ID**           | Used to prevent duplicate entries in the sheet |
+| **Company**          | Stores the company name for the job posting    |
+| **Job Title**        | Stores the job title associated with the posting |
+| **URL**              | Direct link to the job posting                 |
+| **Tailored Resume**  | Link or reference to the generated tailored resume |
+| **Tailored Cover Letter** | Link or reference to the generated tailored cover letter |
+
+> ⚠️ Note: Do not change the column names after connecting the sheet to the workflow, as it may break the automation.
+
+---
+
 ## Security
 
 - No API keys or secrets are stored directly in the workflow JSON.  
