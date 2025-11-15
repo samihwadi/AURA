@@ -41,8 +41,8 @@
       "type": "n8n-nodes-base.googleSheets",
       "typeVersion": 4.7,
       "position": [
-        1456,
-        64
+        1712,
+        112
       ],
       "id": "4ce0087a-820a-4598-96f0-62431e56a205",
       "name": "Check Job IDs",
@@ -82,7 +82,7 @@
       "typeVersion": 4.3,
       "position": [
         224,
-        80
+        112
       ],
       "id": "3936f3b8-5ae0-4b1a-919c-c52b9a7c6a7c",
       "name": "Extract Job Postings",
@@ -106,7 +106,7 @@
       "typeVersion": 1,
       "position": [
         448,
-        80
+        112
       ],
       "id": "1c2e5a5e-037b-4086-829b-7dafad9f875f",
       "name": "50 Limit"
@@ -134,8 +134,8 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.3,
       "position": [
-        880,
-        80
+        1040,
+        112
       ],
       "id": "a0c14d34-12ea-42cf-a18f-ecf6347f2825",
       "name": "Filter and Rate Jobs",
@@ -148,7 +148,8 @@
           "id": "fvHgvqo3rPt3QAb0",
           "name": "Groq account"
         }
-      }
+      },
+      "onError": "continueRegularOutput"
     },
     {
       "parameters": {
@@ -164,7 +165,7 @@
       "typeVersion": 1.2,
       "position": [
         0,
-        -32
+        -16
       ],
       "id": "5b56d3d5-250a-4676-9b74-a0346a6b7c73",
       "name": "Schedule Trigger"
@@ -177,8 +178,8 @@
       },
       "type": "n8n-nodes-base.stickyNote",
       "position": [
-        592,
-        -96
+        832,
+        -32
       ],
       "typeVersion": 1,
       "id": "7c4b5021-7036-43a3-90c6-ab9cae109c30",
@@ -187,13 +188,13 @@
     {
       "parameters": {
         "mode": "runOnceForEachItem",
-        "jsCode": "// Get the content string from the AI node\nconst content = $json.choices[0].message.content;\n\n// Parse the string into a proper JSON object\nconst parsed = JSON.parse(content);\n\n// Return a single object as expected\nreturn {\n  json: {\n    job_id: parsed.job_id,\n    match_score: parsed.match_score\n  }\n};\n"
+        "jsCode": "// If the input contains an error field, return fallback\nif ($json.error) {\n  return {\n    job_id: 0,\n    match_score: 0,\n  };\n}\n\ntry {\n  const content = $json.choices[0].message.content;\n  const parsed = JSON.parse(content);\n\n  return {\n    job_id: parsed.job_id ?? null,\n    match_score: parsed.match_score ?? null,\n  };\n\n} catch (err) {\n  return {\n    job_id: 0,\n    match_score: 0,\n  };\n}\n"
       },
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        1056,
-        80
+        1264,
+        112
       ],
       "id": "890a5ab0-b3a4-426e-9417-b6daa2478750",
       "name": "Sanitise"
@@ -202,13 +203,13 @@
       "parameters": {
         "content": "## Tailor Logic\n",
         "height": 448,
-        "width": 1600,
+        "width": 1744,
         "color": 4
       },
       "type": "n8n-nodes-base.stickyNote",
       "position": [
-        1232,
-        -96
+        1472,
+        -32
       ],
       "typeVersion": 1,
       "id": "2d4a6f12-d486-4c58-ad3d-6847772c8708",
@@ -221,8 +222,8 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        1856,
-        48
+        2160,
+        112
       ],
       "id": "4fbbb921-ac7a-4d14-972a-ef73f6dcd731",
       "name": "Find Full Job Info"
@@ -250,8 +251,8 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.3,
       "position": [
-        2256,
-        48
+        2608,
+        112
       ],
       "id": "36713aa4-e8e6-4f97-8cbe-6458e71c99e6",
       "name": "Tailor Resume and Cover",
@@ -264,13 +265,13 @@
     },
     {
       "parameters": {
-        "jsCode": "const jobInfo = $(\"Find Full Job Info\").all()[0]?.json;\nconst resumeCover = $(\"Tailor Resume and Cover\").all()[0]?.json;\n\nlet content = resumeCover.choices[0]?.message.content;\n\n// Sanitize invalid control chars\ncontent = content.replace(/[\\u0000-\\u0019]+/g, \"\");\n\nconst parsed = JSON.parse(content);\n\nconst result = {\n  job_id: jobInfo.id,\n  job_title: jobInfo.title,\n  job_company: jobInfo.companyName,\n  job_url: jobInfo.link,\n  job_description: jobInfo.descriptionText,\n  tailored_resume: parsed.tailored_resume,\n  tailored_cover: parsed.tailored_cover\n};\n\nreturn [{ json: result }];\n"
+        "jsCode": "const jobInfo = $(\"Find Full Job Info\").all()[0]?.json;\nconst resumeCover = $(\"Tailor Resume and Cover\").all()[0]?.json;\n\nlet content = resumeCover.choices[0]?.message.content;\n\n// Sanitize invalid control chars\ncontent = content.replace(/[\\u0000-\\u0019]+/g, \"\");\n\nconst parsed = JSON.parse(content);\n\nconst result = {\n  job_id: jobInfo.id,\n  job_title: jobInfo.title,\n  job_company: jobInfo.companyName,\n  job_url: jobInfo.link,\n  tailored_resume: parsed.tailored_resume,\n  tailored_cover: parsed.tailored_cover\n};\n\nreturn [{ json: result }];\n"
       },
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        2448,
-        48
+        2832,
+        112
       ],
       "id": "a3a11a37-6965-4d9b-a70a-3ce27c22006c",
       "name": "Merge and Prep",
@@ -283,8 +284,8 @@
       "type": "n8n-nodes-base.splitInBatches",
       "typeVersion": 3,
       "position": [
-        656,
-        80
+        672,
+        112
       ],
       "id": "879efa62-1897-4b0c-b999-5fc263693883",
       "name": "Loop Over Items"
@@ -295,14 +296,14 @@
           "options": {
             "caseSensitive": true,
             "leftValue": "",
-            "typeValidation": "strict",
+            "typeValidation": "loose",
             "version": 2
           },
           "conditions": [
             {
               "id": "4d8b63df-7a63-4afa-ab62-e7c14e2bf8b3",
-              "leftValue": "=",
-              "rightValue": "",
+              "leftValue": "={{$items(\"Check Job IDs\")[0].json.job_id}}",
+              "rightValue": 0,
               "operator": {
                 "type": "string",
                 "operation": "empty",
@@ -312,13 +313,14 @@
           ],
           "combinator": "and"
         },
+        "looseTypeValidation": true,
         "options": {}
       },
       "type": "n8n-nodes-base.if",
       "typeVersion": 2.2,
       "position": [
-        1648,
-        64
+        1936,
+        112
       ],
       "id": "2e155eb8-a034-470c-aa65-0e5981e4f482",
       "name": "If Job not in Sheet"
@@ -347,7 +349,7 @@
             "Job title": "={{ $json.job_title }}",
             "Company": "={{ $json.job_company }}",
             "URL": "={{ $json.job_url }}",
-            "Description": "={{ $json.job_description }}",
+            "Description": "=",
             "Tailored Resume": "={{ $json.tailored_resume }}",
             "Tailored Cover Letter": "={{ $json.tailored_cover }}"
           },
@@ -461,8 +463,8 @@
       "type": "n8n-nodes-base.googleSheets",
       "typeVersion": 4.7,
       "position": [
-        2656,
-        48
+        3056,
+        192
       ],
       "id": "ae775a98-b2dd-4601-a45f-e4410d79e34d",
       "name": "Append row in sheet",
@@ -478,8 +480,8 @@
       "type": "n8n-nodes-base.wait",
       "typeVersion": 1.1,
       "position": [
-        2064,
-        48
+        2384,
+        112
       ],
       "id": "6de71a10-21d1-43c8-8f6c-c9fa721159a5",
       "name": "Wait",
@@ -512,11 +514,25 @@
       "type": "n8n-nodes-base.if",
       "typeVersion": 2.2,
       "position": [
-        1248,
-        80
+        1488,
+        112
       ],
       "id": "c097ba43-dcc4-4983-9fd3-63168159155d",
       "name": ">=70%"
+    },
+    {
+      "parameters": {
+        "amount": 20
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        880,
+        112
+      ],
+      "id": "27bc97f5-038e-40e3-839f-a809bf388638",
+      "name": "Token Buffer",
+      "webhookId": "7c44ce19-cd22-4234-9cc6-972ccbdc3e91"
     }
   ],
   "pinData": {},
@@ -636,7 +652,7 @@
         [],
         [
           {
-            "node": "Filter and Rate Jobs",
+            "node": "Token Buffer",
             "type": "main",
             "index": 0
           }
@@ -648,6 +664,13 @@
         [
           {
             "node": "Find Full Job Info",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Loop Over Items",
             "type": "main",
             "index": 0
           }
@@ -693,13 +716,26 @@
           }
         ]
       ]
+    },
+    "Token Buffer": {
+      "main": [
+        [
+          {
+            "node": "Filter and Rate Jobs",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
     }
   },
-  "active": false,
+  "active": true,
   "settings": {
-    "executionOrder": "v1"
+    "executionOrder": "v1",
+    "callerPolicy": "workflowsFromSameOwner",
+    "availableInMCP": false
   },
-  "versionId": "68becb2b-cfa9-4ce4-afa5-6960b887340f",
+  "versionId": "69424a53-9b43-4903-96b9-17364094f56b",
   "meta": {
     "templateCredsSetupCompleted": true,
     "instanceId": "ef7e288dd6ee68d7d79eee623824781827b8884eaa8aafbab123a6a94772833b"
