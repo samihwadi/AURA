@@ -97,6 +97,11 @@ Before running the workflow, prepare a Google Sheets document with the following
 
 ---
 
+## Tips & Recommendations
+
+For an even more efficient job search and application process, combining AURA with tools like the **SpeedyApply browser extension** can significantly speed up your workflow. This setup has been personally effective in automating job discovery, evaluation, and application submission, reducing repetitive tasks and saving time.
+
+
 ## License
 
 This workflow is open-source. Feel free to adapt it to your own job search automation needs.
